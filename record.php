@@ -27,7 +27,7 @@
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-41411079-1', '140.112.30.165');
+  ga('create', 'UA-41411079-1', '140.112.30.171');
   ga('send', 'pageview');
 
 </script>
@@ -41,7 +41,7 @@
    //get Alcoholics data from database
    include_once('connect_db.php');
    $conn = connect_to_db();
-   $query = "SELECT * FROM  Alcoholic ORDER BY `UserId` ASC";
+   $query = "SELECT * FROM  Patient ORDER BY `UserId` ASC";
    $result_all = mysql_query($query);
    $alcoholics = array();
    $alcoholic_names = array();
@@ -51,7 +51,7 @@
    }
 
    //get Detections data from database
-   $query_detection = "SELECT * FROM `Detection` WHERE `UserId` IN (SELECT `UserId` FROM `Alcoholic`) ORDER BY `Timestamp` ASC";
+   $query_detection = "SELECT * FROM `TestResult` WHERE `UserId` IN (SELECT `UserId` FROM `Patient`) ORDER BY `Timestamp` ASC";
    $result_detection = mysql_query($query_detection);
    $detections = array();
    while($row = mysql_fetch_assoc($result_detection)){
@@ -66,6 +66,14 @@
       $blocks[$row["BlockID"]] = $row;
    }
 */
+
+   //get questionnaire data
+   $query_ques = "SELECT * FROM `NoteAdd` WHERE `UserId` IN (SELECT `UserId` FROM `Patient`) ORDER BY `Timestamp` ASC";
+   $result_ques = mysql_query($query_ques);
+   $ques = array();
+   while($row = mysql_fetch_assoc($result_ques)){
+       $ques[$row["UserId"]][str_replace("-","/",$row["Date"])][$row["Time"]]= $row;
+   }
    mysql_close($conn);
 
    include_once('utility.php');
@@ -76,6 +84,7 @@
 ?>
 <script language="javascript" type="text/javascript">
    //pass Alcoholics & Detections data to client
+   var ques = <?php echo json_encode($ques) ?>;
    var alcoholics = <?php echo json_encode($alcoholics) ?>;
    var detections_valid = <?php echo json_encode($detections_valid) ?>;
    var alcoholic_names = <?php echo json_encode($alcoholic_names)?>;
@@ -213,10 +222,10 @@ function fillPatientData(date_array, patient_array){
          one_day.setAttribute("class", "div-content");
          one_day.setAttribute("style", "height: 135px;");
 
-         for(var k = 1; k <= 3; k++){
+         for(var k = 1 ; k <=3 ; k++){
             if(detections_valid[patient_array[i]] !== undefined && 
                detections_valid[patient_array[i]][date_array[j]] !== undefined && 
-               detections_valid[patient_array[i]][date_array[j]][k] !== undefined){
+               detections_valid[patient_array[i]][date_array[j]][k] !== undefined ){
 
                var brac_value = detections_valid[patient_array[i]][date_array[j]][k].Brac;
                var data = document.createElement("div");
@@ -235,25 +244,41 @@ function fillPatientData(date_array, patient_array){
 
                var brac = document.createElement("div");
                brac.setAttribute("class", "underStandard");
-               brac.innerHTML = detections_valid[patient_array[i]][date_array[j]][k].Brac.toFixed(3);
+               if(detections_valid[patient_array[i]][date_array[j]][k].Result =="0")
+               brac.innerHTML = "NEG";
+               else
+               brac.innerHTML = "POS";
                data.appendChild(brac);
-
-               if(detections_valid[patient_array[i]][date_array[j]][k].Emotion != "-1"){
+                //Type
+                var t_time = detections_valid[patient_array[i]][date_array[j]][k].Time
+               if(ques[patient_array[i]][date_array[j]][t_time].Type > "0"){
                   var emotion = document.createElement("img");
-                  var level = parseInt(detections_valid[patient_array[i]][date_array[j]][k].Emotion);
-                  emotion.src = "img/msg_emotion_" + level.toString() + ".png";
+                  var level = parseInt(ques[patient_array[i]][date_array[j]][t_time].Type);
+                  emotion.src = "img/ques_" + level.toString() + ".png";
                   emotion.setAttribute("class", "emotion_img");
                   data.appendChild(emotion);
                }
-              
-               if(detections_valid[patient_array[i]][date_array[j]][k].Craving != "-1"){
-                  var desire = document.createElement("img");
-                  var level = parseInt(detections_valid[patient_array[i]][date_array[j]][k].Craving);
-                  desire.src = "img/msg_desire_" + level.toString() + ".png";
+               else{
+                var emotion = document.createElement("div")
+                 emotion.setAttribute("class", "emotion_img");
+                  emotion.innerHTML ="-";
+                  data.appendChild(emotion);
+               }
+            //item  
+               if(ques[patient_array[i]][date_array[j]][t_time].Type > "0"){
+                  var desire = document.createElement("div");
                   desire.setAttribute("class", "desire_img");
+                  desire.innerHTML = ques[patient_array[i]][date_array[j]][t_time].Items;
+                  
                   data.appendChild(desire);
                }
-
+               else{
+              var desire = document.createElement("div") ;
+                 desire.setAttribute("class", "desire_img");
+                  desire.innerHTML = "-"; 
+                  data.appendChild(desire);
+               }
+               
                one_day.appendChild(data);
             }
             else{

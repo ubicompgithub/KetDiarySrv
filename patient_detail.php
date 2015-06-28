@@ -16,7 +16,7 @@
    $conn = connect_to_db();
 
    // get Alcoholics data from database
-   $query_alcoholic = "SELECT * FROM  Alcoholic";
+   $query_alcoholic = "SELECT * FROM  Patient";
    $result_alcoholic = mysql_query($query_alcoholic);
    $alcoholics = array();
    while($row = mysql_fetch_assoc($result_alcoholic)){
@@ -82,15 +82,15 @@
 
    // all data
    $detections     = getTableData($uid, "Detection");
-   $questionnaires = getTableData($uid, "Questionnaire");
-   $additionals    = getTableData($uid, "AdditionalQuestionnaire");
-   $emotionDIYs    = getTableData($uid, "EmotionDIY");
-   $emotionManages = getTableData($uid, "EmotionManagement");
-   $exchanges      = getTableData($uid, "ExchangeHistory");
-   $facebooks      = getTableData($uid, "Facebook");
-   $storyReadings  = getTableData($uid, "StorytellingReading");
-   $storyRecords   = getTableData($uid, "StorytellingRecord");
-   $storyTests     = getTableData($uid, "StorytellingTest");
+  // $questionnaires = getTableData($uid, "Questionnaire");
+ //  $additionals    = getTableData($uid, "AdditionalQuestionnaire");
+  // $emotionDIYs    = getTableData($uid, "EmotionDIY");
+  // $emotionManages = getTableData($uid, "EmotionManagement");
+  // $exchanges      = getTableData($uid, "ExchangeHistory");
+   //$facebooks      = getTableData($uid, "Facebook");
+   //$storyReadings  = getTableData($uid, "StorytellingReading");
+  // $storyRecords   = getTableData($uid, "StorytellingRecord");
+  // $storyTests     = getTableData($uid, "StorytellingTest");
 
    foreach($detections as $timestamp => $record){
       $detections[$timestamp]["debug"] = get_detection_debug($uid, $record["Timestamp"]);
@@ -127,15 +127,15 @@
    var alcoholic      = <?php echo json_encode($target)?>;
    var detections_all = <?php echo json_encode($detections)?>;
    var detections     = <?php echo json_encode($valid_detections)?>;
-   var questionnaires = <?php echo json_encode($questionnaires)?>;
-   var additionals    = <?php echo json_encode($additionals)?>;
-   var emotionDIYs    = <?php echo json_encode($emotionDIYs)?>;
-   var emotionManages = <?php echo json_encode($emotionManages)?>;
-   var coupons        = <?php echo json_encode($exchanges)?>;
-   var facebooks      = <?php echo json_encode($facebooks)?>;
-   var storyReadings  = <?php echo json_encode($storyReadings)?>;
-   var storyRecords   = <?php echo json_encode($storyRecords)?>;
-   var storyTests     = <?php echo json_encode($storyTests)?>;
+   //var questionnaires = <?php echo json_encode($questionnaires)?>;
+   //var additionals    = <?php echo json_encode($additionals)?>;
+   //var emotionDIYs    = <?php echo json_encode($emotionDIYs)?>;
+   //var emotionManages = <?php echo json_encode($emotionManages)?>;
+   //var coupons        = <?php echo json_encode($exchanges)?>;
+   //var facebooks      = <?php echo json_encode($facebooks)?>;
+   //var storyReadings  = <?php echo json_encode($storyReadings)?>;
+   //var storyRecords   = <?php echo json_encode($storyRecords)?>;
+   //var storyTests     = <?php echo json_encode($storyTests)?>;
    //var answers        = <?php echo json_encode($answers)?>;
    var clickLogs      = <?php echo json_encode($clickLogs)?>;
 </script>

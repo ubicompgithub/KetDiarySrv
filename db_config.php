@@ -1,6 +1,6 @@
 <?php
 	$DB_HOST = "localhost";
-	$DB = "drugfreediary";
+	$DB = "rehabdiary";
 	$SQL_ACC = "root";
 	$SQL_PWD = "ubicomp";
 ?>

@@ -28,7 +28,7 @@
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-41411079-1', '140.112.30.165');
+  ga('create', 'UA-41411079-1', '140.112.30.171');
   ga('send', 'pageview');
 
 </script>
@@ -45,7 +45,7 @@
    //get Alcoholics data from database
    include_once('connect_db.php');
    $conn = connect_to_db();
-   $query = "SELECT * FROM  Alcoholic ORDER BY `UserId` ASC";
+   $query = "SELECT * FROM  Patient ORDER BY `UserId` ASC";
    $result_all = mysql_query($query);
    $alcoholics = array();
    $alcoholic_names = array();
@@ -53,9 +53,9 @@
       $alcoholics[] = $row;
       $alcoholic_names[] = $row["UserId"];
    }
-
+   
    //get Detections data from database
-   $query_detection = "SELECT * FROM `Detection` WHERE `UserId` IN (SELECT `UserId` FROM `Alcoholic`) ORDER BY `Timestamp` ASC";
+   $query_detection = "SELECT * FROM `TestResult` WHERE `UserId` IN (SELECT `UserId` FROM `Patient`) ORDER BY `Timestamp` ASC";
    $result_detection = mysql_query($query_detection);
    $detections = array();
    while($row = mysql_fetch_assoc($result_detection)){
@@ -71,34 +71,34 @@
    }
 
    //get EmotionDIY
-   $query_emotionDIY = "SELECT * FROM `EmotionDIY` ORDER BY `Timestamp` ASC";
-   $result_emotionDIY = mysql_query($query_emotionDIY);
-   $emotionDIYs = array();
-   while($row = mysql_fetch_assoc($result_emotionDIY)){
-      $emotionDIYs[$row["UserId"]][str_replace("-", "/", $row["Date"])][$row["Time"]] = $row;
-   }
+   //$query_emotionDIY = "SELECT * FROM `EmotionDIY` ORDER BY `Timestamp` ASC";
+   //$result_emotionDIY = mysql_query($query_emotionDIY);
+   //$emotionDIYs = array();
+   //while($row = mysql_fetch_assoc($result_emotionDIY)){
+     // $emotionDIYs[$row["UserId"]][str_replace("-", "/", $row["Date"])][$row["Time"]] = $row;
+   //}
 
    //get EmotionManage
-   $query_emotionManage = "SELECT * FROM `EmotionManagement` ORDER BY `Timestamp` ASC";
-   $result_emotionManage = mysql_query($query_emotionManage);
-   $emotionManages = array();
-   while($row = mysql_fetch_assoc($result_emotionManage)){
-      $emotionManages[$row["UserId"]][str_replace("-", "/", $row["Date"])][$row["Time"]] = $row;
-   }
+   //$query_emotionManage = "SELECT * FROM `EmotionManagement` ORDER BY `Timestamp` ASC";
+   //$result_emotionManage = mysql_query($query_emotionManage);
+   //$emotionManages = array();
+   //while($row = mysql_fetch_assoc($result_emotionManage)){
+    //  $emotionManages[$row["UserId"]][str_replace("-", "/", $row["Date"])][$row["Time"]] = $row;
+  // }
 
    //get Questionnaire
-   $query_Questionnaire = "SELECT * FROM `Questionnaire` WHERE `QuestionnaireType` >= 0 ORDER BY `Timestamp` ASC";
+   $query_Questionnaire = "SELECT * FROM `TestResult` WHERE `UserId` IN (SELECT `UserId` FROM `Patient`) ORDER BY `Timestamp` ASC";
    $result_Questionnaire = mysql_query($query_Questionnaire);
    $questionnaires = array();
    while($row = mysql_fetch_assoc($result_Questionnaire)){
-      $questionnaires[$row["UserId"]][str_replace("-", "/", $row["Date"])][$row["Time"]] = $row;
+      $questionnaires[$row["UserId"]][str_replace("-", "/", $row["Date"])][$row["Time"]]= $row;
    }
 
    mysql_close($conn);
 
    include_once('utility.php');
 
-   //only retrieve valid records in each time span
+  // only retrieve valid records in each time span
    $detections_valid = detection_prime($detections);
 
    function UserIDtoDeviceID($userID){
@@ -107,7 +107,7 @@
    }
 
    function DeviceIDtoDeviceID($deviceID){
-      global $alcoholics;
+     global $alcoholics;
       foreach($alcoholics as $userID => $data){
          if($data["DeviceID"] == $deviceID) return $userID;
       }
@@ -122,8 +122,8 @@
    var detections_valid = <?php echo json_encode($detections_valid) ?>;
    var alcoholic_names = <?php echo json_encode($alcoholic_names)?>;
    var blocks = <?php echo json_encode($blocks)?>;
-   var emotion_diy = <?php echo json_encode($emotionDIYs)?>;
-   var emotion_manage = <?php echo json_encode($emotionManages)?>;
+   //var emotion_diy = <?php echo json_encode($emotionDIYs)?>;
+   //var emotion_manage = <?php echo json_encode($emotionManages)?>;
    var questionnaire = <?php echo json_encode($questionnaires)?>;
 </script>
 
@@ -134,7 +134,7 @@
    <div id="tab_block" style="width: 700px; margin: 0px auto;" class="tabbable">
       <ul class="nav nav-tabs" id="tab">
 	 <li class="active"><a href="#pie_block" data-toggle="tab">Tests</a></li>
-         <li><a href="#questionnaire_block" data-toggle="tab">Questionnaires</a></li>
+         <li><a href="#questionnaire_block" data-toggle="tab">Questionnaires(N)</a></li>
       </ul>
 
       <div id="statistics" class="tab-content">
@@ -157,6 +157,7 @@
       <button class="btn" id="morning_btn" onclick="changeBlockId('1', curDay);">早</button>
       <button class="btn" id="afternoon_btn" onclick="changeBlockId('2', curDay);">午</button>
       <button class="btn" id="night_btn" onclick="changeBlockId('3', curDay);">晚</button>
+      <button class="btn" id="allday_btn" onclick="changeBlockId('4', curDay);">全</button>
    </div>
 
    <form  id="to-patient" action="patient_newUI.php" method="post">
@@ -195,6 +196,7 @@
    });
 
    // find the current block time
+   
    var hour = now.getHours();
    for(var id in blocks){
       if(hour <= blocks[id]['End']){ // the blocks should be sorted
@@ -212,7 +214,7 @@
 
 // render the pie block, and questionnaire table according to the _blockId and curDay
 function changeBlockId(_blockId, _curDay){
-   if(_curDay == today_str && _blockId > max_blockId)
+   if(_curDay == today_str && _blockId > max_blockId && _blockId != 4)
       if(curDay != today_str)
          _blockId = max_blockId;
       else
@@ -233,6 +235,7 @@ function changeBlockId(_blockId, _curDay){
    $("#morning_btn").removeClass("btn-info");
    $("#afternoon_btn").removeClass("btn-info");
    $("#night_btn").removeClass("btn-info");
+   $("#allday_btn").removeClass("btn-info");
    $("#table_div").text("")
    $("#ques_name_table").text("");
 
@@ -246,6 +249,9 @@ function changeBlockId(_blockId, _curDay){
       case "3": 
               $("#night_btn").addClass("btn-info"); 
               break;
+      case "4":
+              $("#allday_btn").addClass("btn-info");        
+              break;
       default:
               console.log("Unknown blockId: " + blockId);
    }
@@ -253,6 +259,7 @@ function changeBlockId(_blockId, _curDay){
    if(curDay == today_str){
       if(max_blockId < 2) $("#afternoon_btn").addClass("disabled");
       if(max_blockId < 3) $("#night_btn").addClass("disabled");
+   
    }
    else{
       $("#morning_btn").removeClass("disabled")
@@ -261,6 +268,7 @@ function changeBlockId(_blockId, _curDay){
    }
    
    // make title
+   
    var block_time = document.getElementById('block_time');
    var _date = curDay; //now.toISOString().substr(0,10).replace(/\-/g, '/');
    var _time = blocks[blockId]['Name'];
@@ -320,18 +328,19 @@ function changeBlockId(_blockId, _curDay){
    for(var i in alcoholic_names){
       if(found[alcoholic_names[i]] == false) skipped_pp.push(alcoholic_names[i]);
    }
-
+   
    for(var name in questionnaire){
       var records = questionnaire[name][curDay];
       for(var time in records){
          var hour = time.substr(0,2);
-         if(hour >= blocks[blockId]['Start'] && hour <= blocks[blockId]['End']){
+         if(hour >= blocks[blockId]['Start'] && hour <= blocks[blockId]['End'] && records[time]['IsFilled'] == '1'){
             if(questionnaire_pp.indexOf(name) == -1)
                questionnaire_pp.push(name);
          }
+
       }
    }
-   
+/*   
    for(var name in emotion_diy){
       var records = emotion_diy[name][curDay];
       for(var time in records){
@@ -356,7 +365,7 @@ function changeBlockId(_blockId, _curDay){
       }
    }
    
-   
+  */ 
    drawPieChart();
    showQuesTable();
    $("#block_button").removeClass('hidden');
@@ -440,27 +449,29 @@ function changeBlockId(_blockId, _curDay){
       var data = new google.visualization.DataTable();
       data.addColumn('string', 'Type');
       data.addColumn('number', 'Number');
-      data.addRows(3);
-      data.setCell(0, 0, "<b>吹氣問卷</b>", null, _style);
-      data.setCell(1, 0, "<b>心情DIY</b>", null, _style);
-      data.setCell(2, 0, "<b>情緒管理</b>", null, _style);
+      data.addRows(5);
+      data.setCell(0, 0, "<b>活動問卷(測試後)</b>", null, _style);
+      data.setCell(1, 0, "<b>活動問卷(主動加)</b>", null, _style);
+      data.setCell(2, 0, "<b>常態問題</b>", null, _style);
+      data.setCell(3, 0, "<b>隨機式問題</b>", null, _style);
+      data.setCell(4, 0, "<b>應對技巧</b>", null, _style);
       data.setCell(0, 1, questionnaire_pp.length, null, _style);
-      data.setCell(1, 1, emotion_diy_pp.length, null, _style);
-      data.setCell(2, 1, emotion_manage_pp.length, null, _style);
+     // data.setCell(1, 1, emotion_diy_pp.length, null, _style);
+      //data.setCell(2, 1, emotion_manage_pp.length, null, _style);
 
       function selectHandler(){
          var selectedItem = table.getSelection()[0];
          if(selectedItem !== undefined){
             switch(selectedItem.row){
                case 0: // questionnaire
-                       showQuesNameTable("吹氣問卷", questionnaire_pp);
+                       showQuesNameTable("活動問卷", questionnaire_pp);
                        break;
-               case 1: // emotion_diy
-                       showQuesNameTable("心情DIY", emotion_diy_pp);
-                       break;
-               case 2: // emotion_manage
-                       showQuesNameTable("情緒管理", emotion_manage_pp);
-                       break;
+        //       case 1: // emotion_diy
+          //             showQuesNameTable("心情DIY", emotion_diy_pp);
+           //            break;
+            //   case 2: // emotion_manage
+              //         showQuesNameTable("情緒管理", emotion_manage_pp);
+                //       break;
             }
          }         
       }

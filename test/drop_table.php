@@ -3,7 +3,7 @@
 include_once('../connect_db.php');
 $conn = connect_to_db();
 
-$query = "DROP TABLE IF EXIST Cassette, Patient, TestResult, NoteAdd, TestDetail";
+$query = "DROP TABLE IF EXISTS Cassette, Patient, TestResult, NoteAdd, TestDetail";
 
 
 if(mysql_query($query, $conn))

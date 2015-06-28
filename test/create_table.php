@@ -26,27 +26,29 @@ $query3 = "CREATE TABLE IF NOT EXISTS TestResult(
     id          INT(11)     NOT NULL    AUTO_INCREMENT PRIMARY KEY,
     UserId      VARCHAR(64) NOT NULL,
     Result      INT(2)      NOT NULL,
-    DeviceID    VARCHAR(64) NOT NULL,
+    DeviceId    VARCHAR(64) NOT NULL,
+    CassetteId  VARCHAR(64) NOT NULL,
     Date        DATE        NOT NULL,
-    Time        DATETIME    NOT NULL,
+    Time        TIME        NOT NULL,
     Timestamp   BIGINT(20)  NOT NULL,
     IsPrime     TINYINT(1)  NOT NULL,
     IsFilled    TINYINT(1)  NOT NULL
 )";
 
 $query4 = "CREATE TABLE IF NOT EXISTS NoteAdd(
-    id          INT(11)      NOT NULL     AUTO_INCREMENT   PRIMARY KEY,
-    UserId      VARCHAR(64)  NOT NULL,
-    IsAfterTest TINYINT(1)   NOT NULL,
-    Date        DATE         NOT NULL,
-    Time        DATETIME     NOT NULL,
-    Timestamp   BIGINT(20)   NOT NULL,
-    Timeslot    INT(2)       NOT NULL,
-    Category    TINYINT(1)   NOT NULL,
-    Type        INT(2)       NOT NULL,
-    Items       INT(2)       NOT NULL,
-    Impact      INT(2)       NOT NULL,
-    Description VARCHAR(255)
+    id              INT(11)      NOT NULL     AUTO_INCREMENT   PRIMARY KEY,
+    UserId          VARCHAR(64)  NOT NULL,
+    IsAfterTest     TINYINT(1)   NOT NULL,
+    Date            DATE         NOT NULL,
+    Time            TIME     NOT NULL,
+    Timestamp       BIGINT(20)   NOT NULL,
+    RecordDate      DATE         NOT NULL,
+    RecordTimeslot        INT(2)       NOT NULL,
+    Category        TINYINT(1)   NOT NULL,
+    Type            INT(2)       NOT NULL,
+    Items           INT(2)       NOT NULL,
+    Impact          INT(2)       NOT NULL,
+    Description     VARCHAR(255)
 
 )";
 
@@ -54,7 +56,7 @@ $query5 = "CREATE TABLE IF NOT EXISTS TestDetail(
     id                  INT(11)     NOT NULL    AUTO_INCREMENT   PRIMARY KEY,
     UserId              VARCHAR(64) NOT NULL,
     Date                DATE        NOT NULL,
-    Time                DATETIME    NOT NULL,
+    Time                TIME    NOT NULL,
     Timestamp           BIGINT(20)  NOT NULL,
     DeviceId            VARCHAR(64) NOT NULL,
     CassetteId          VARCHAR(64),
@@ -64,7 +66,7 @@ $query5 = "CREATE TABLE IF NOT EXISTS TestDetail(
     DevicePower         INT(8),
     ColorReading        INT(8),
     ConnectionFailRate  INT(8),
-    FailedReason        INT(2)
+    FailedReason        VARCHAR(64)
 
 )";
 

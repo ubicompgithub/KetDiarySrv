@@ -1,19 +1,21 @@
 <?php
 	
-	$uid = $_POST['USERID'];
-    $result=$_POST['RESULT'];
-    $deviceId=$_POST['DEVICEID'];
-    $cassetteId=$_POST['CASSETTEID'];
+	$uid = $_POST['uid'];
+    $result=$_POST['data'][2];
+    $deviceId=$_POST['data'][1];
+    $cassetteId=$_POST['data'][3];
 	
 	$timestamp = $_POST['data'][0];
 	$isPrime = $_POST['data'][4];
-    $isFilled= $_POST['ISFILLED'];
+    $isFilled= $_POST['data'][5];
     
     //for upload photo 
-    /*
+    
 	$uploadDest = '../patients/' . $uid . '/' . $timestamp;
 	if (!file_exists($uploadDest)) {
 		if (!mkdir($uploadDest, 0777, true)) {
+            $error = error_get_last();
+            echo $error['message'];
 			die("Failed to create directory: " . $uploadDest);
 		}
 	}
@@ -34,7 +36,7 @@
 	} else {
 		die("No upload file");
 	}
-    */
+    
 	
 	include_once('../connect_db.php');
 	$dbhandle = connect_to_db();
@@ -44,10 +46,10 @@
 	$time = date('H:i:s', $timestamp_in_sec);
 	$hr = intval(date('H', $timestamp_in_sec));
 
-    /*
-	$datafile = $uploadDest.'/'.$timestamp.'.txt';
-	$geofile = $uploadDest.'/'.'geo.txt';
-	$detailfile = $uploadDest.'/detection_detail.txt';
+    
+	$datafile = $uploadDest.'/voltage.txt';
+	$detailfile = $uploadDest.'/color_raw.txt';
+
 	$imgfilesob = $uploadDest.'/'.'IMG_'.$timestamp.'_1.sob';
 	$imgfile = $uploadDest.'/'.'IMG_'.$timestamp.'_1.jpg';
 	$imgfilesob2 = $uploadDest.'/'.'IMG_'.$timestamp.'_2.sob';
@@ -65,20 +67,21 @@
 
 	if (file_exists($imgfile)&&file_exists($imgfile2)&&file_exists($imgfile3)){
 	}else{
-		die('no snapshots');
+        echo 'no snapshots';
+		//die('no snapshots');
 	}
 
 	if (!file_exists($detailfile)){
 		die('no detail file');
-	}*/
+	}
 
 	$sql = "INSERT INTO TestResult (UserId,Result,DeviceId,
     CassetteId,Date,Time,Timestamp,isPrime,isFilled) 
     VALUES ('$uid',$result,'$deviceId', '$cassetteId','$date','$time',
     $timestamp,$isPrime,$isFilled)";
-		$result = mysql_query($sql);
-		echo "\n$sql\n";
-		if (!$result)
+	$result = mysql_query($sql);
+	echo "\n$sql\n";
+	if (!$result){
 			die ('invalid query');
 	}
 	

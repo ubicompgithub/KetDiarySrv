@@ -1,17 +1,18 @@
 <?php
 	
 	$uid = $_POST['uid'];
-	$timestamp = $_POST['data'][0];
-	$blowStartTimes = $_POST['data'][1];
-	$blowBreakTimes = $_POST['data'][2];
-	$pressureDiffMax = $_POST['data'][3];
-	$pressureMin = $_POST['data'][4];
-	$pressureAverage = $_POST['data'][5];
-	$voltageInit = $_POST['data'][6];
-	$disconnectionMillis = $_POST['data'][7];
-	$serialDiffMax = $_POST['data'][8];
-	$serialDiffAverage = $_POST['data'][9];
-	$sensorId = $_POST['data'][10];
+    $deviceId = $_POST['data'][0];
+	$timestamp = $_POST['data'][2];
+	$cassetteId = $_POST['data'][1];
+	$failedState = $_POST['data'][3];
+	$firstVoltage = $_POST['data'][4];
+	$secondVoltage = $_POST['data'][5];
+	$devicePower = $_POST['data'][6];
+	$colorReading = $_POST['data'][7];
+	$connectionFailRate = $_POST['data'][8];
+	$failedReason = $_POST['data'][9];
+   
+
 
 	$timestamp_in_sec = $timestamp/1000;
 	$date = date('Y-m-d', $timestamp_in_sec);
@@ -21,7 +22,16 @@
 	$dbhandle = connect_to_db();
 
 	$sensorId = mysql_real_escape_string($sensorId);	
-	$sql = "INSERT INTO BreathDetail (UserId,Date,Time,Timestamp,BlowStartTimes,BlowBreakTimes,PressureDiffMax,PressureMin,PressureAverage,VoltageInit,DisconnectionMillis,SerialDiffMax,SerialDiffAverage, SensorId) VALUES ('$uid','$date','$time',$timestamp,$blowStartTimes,$blowBreakTimes,$pressureDiffMax,$pressureMin,$pressureAverage,$voltageInit,$disconnectionMillis,$serialDiffMax,$serialDiffAverage, '{$sensorId}')";
+    $deviceId = mysql_real_escape_string($deviceId);
+    $cassetteId = mysql_real_escape_string($cassetteId);
+    $failedReason = mysql_real_escape_string($failedReason);
+
+	$sql = "INSERT INTO TestDetail (UserId,Date,Time,Timestamp,DeviceId,
+    CassetteId, FailedState, FirstVoltage, SecondVoltage, DevicePower,
+    ColorReading, ConnectionFailRate, FailedReason) VALUES 
+    ('$uid','$date','$time',$timestamp,'{$deviceId}', '{$cassetteId}', $failedState,
+    $firstVoltage, $secondVoltage, $devicePower, $colorReading, $connectionFailRate,
+    '{$failedReason}')";
 	$result = mysql_query($sql);
 	if (!$result){
 		echo $sql;

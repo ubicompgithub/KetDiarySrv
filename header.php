@@ -19,7 +19,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </a>
-      <a class="brand" href="index.php">戒酒小幫手2正式網站</a>
+      <a class="brand" href="index.php">戒K小幫手測試網站</a>
       <div class="nav-collapse">
         <ul class="nav">
           <li id="daily"><a href="index.php">Daily</a></li>

@@ -39,7 +39,7 @@
    include_once('score_utility.php');
    include_once('utility.php');
    $conn = connect_to_db();
-   $query = "SELECT * FROM Alcoholic";
+   $query = "SELECT * FROM Patient";
    $result_all = mysql_query($query);
    $alcoholics = array();
    while($row = mysql_fetch_assoc($result_all)){
@@ -228,10 +228,10 @@ function draw_table(table_name, patient_array){
    var patient_data = new google.visualization.DataTable();
    patient_data.addColumn('string', 'UserId');
    patient_data.addColumn('string', 'Join Date');
-   patient_data.addColumn('number', 'Current Points (Coupons)');
-   patient_data.addColumn('number', 'Ranking (Month)');
-   patient_data.addColumn('number', 'Ranking (Week)');
-   patient_data.addColumn('string', 'start / restart');
+  // patient_data.addColumn('number', 'Current Points (Coupons)');
+  // patient_data.addColumn('number', 'Ranking (Month)');
+  // patient_data.addColumn('number', 'Ranking (Week)');
+  // patient_data.addColumn('string', 'start / restart');
    patient_data.addColumn('string', 'App Version');
    patient_data.addColumn('string', 'Wifi Check');
    patient_data.addColumn('string', 'DeviceId');
@@ -244,7 +244,7 @@ function draw_table(table_name, patient_array){
       patient_data.addRows(1);
       patient_data.setCell(i, j++, guy['UserId'], null, cell_style);
       patient_data.setCell(i, j++, guy['JoinDate'].substr(5).replace("-","/"), null, cell_style);
-      patient_data.setCell(i, j++, guy['CurPoints'], guy['CurPoints'].toString() + " (" + (Math.floor(guy['CurPoints']/50)).toString() + ")", cell_style);
+      /*patient_data.setCell(i, j++, guy['CurPoints'], guy['CurPoints'].toString() + " (" + (Math.floor(guy['CurPoints']/50)).toString() + ")", cell_style);
       if(guy['MonthRank'] == 999)
          patient_data.setCell(i, j++, 999, 'unrank', cell_style);
       else
@@ -257,6 +257,7 @@ function draw_table(table_name, patient_array){
          patient_data.setCell(i, j++, guy['start_restart']['start'] + '/' + guy['start_restart']['restart'], null, cell_style);
       else
          patient_data.setCell(i, j++, 'no data', null, cell_style)
+      */
       patient_data.setCell(i, j++, guy['AppVersion'], null, cell_style);
       if(guy['ConnectionCheckTime'] == null)
          patient_data.setCell(i, j++, '-', null, cell_style);

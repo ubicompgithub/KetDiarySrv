@@ -37,8 +37,8 @@
 	<div class="container">
 		<form id="login_form" name="login" action="login_verifier.php" method="post" class="form-signin">
 			<div id=form-header>
-				<img src="img/icon.png" class="icon"/>
-				<h2>戒酒小幫手2(正式)</h2>
+            <img src="img/icon.png" class="icon"/>
+				<h2>戒K小幫手(測試)</h2>
 			</div>
 			<h2 class="form-signin-heading">Please sign in</h2>
 			<input type="text" class="input-block-level" placeholder="Account" name="account" size="12" maxlength="12"><br>

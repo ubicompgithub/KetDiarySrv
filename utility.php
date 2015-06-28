@@ -20,7 +20,7 @@
          $record_date = str_replace("-", "/", $record["Date"]);
          $record["Brac"] = (float)$record["Brac"];
          if($record["IsPrime"])
-            $detections_valid[$record_date][((int)$record["TimeSlot"]) + 1] = $record;
+            $detections_valid[$record_date][$record["TimeSlot"]] = $record;
       }
       return $detections_valid;
    }

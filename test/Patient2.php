@@ -1,17 +1,17 @@
 <?php
 
 	// Get the user id
-	$uid = $_POST['USERID'];
+	$uid = $_POST['uid'];
     
     $joinDate = date("Y-m-d");
-	$joinDate = $_POST['userData'][0];
+	//$joinDate = $_POST['userData'][0];
     $joinDate = date("Y-m-d");
 
 	$DeviceId = "unknown";
-	$DeviceId = $_POST['userData'][1];
+	$DeviceId = $_POST['userData'][0];
 
 	#$usedCounter = $_POST['userData'][2];
-	$App = $_POST['userData'][3];
+	$App = $_POST['userData'][1];
 
 	include('../connect_db.php');
 	$dbhandle = connect_to_db();
@@ -24,14 +24,14 @@
 	$row = mysql_fetch_array($result);
 	if ($row) {
 		echo "update user\n";
-		//$uidOld = $row['UserId'];
-		//$devIdOld = $row['DeviceId'];
-		//if ($devIdOld <> $sensorId){
-		//	$sql = "UPDATE Alcoholic SET DeviceId = '$DeviceId' WHERE UserId = '$uidOld'";
-		//	$result = mysql_query($sql);
-		//	if (!$result)
-		//		die('fail 0');
-		//}
+		$uidOld = $row['UserId'];
+		$devIdOld = $row['DeviceId'];
+		if ($devIdOld <> $DeviceId){
+			$sql = "UPDATE Patient SET DeviceId = '$DeviceId' WHERE UserId = '$uidOld'";
+			$result = mysql_query($sql);
+			if (!$result)
+				die('fail 0');
+		}
 	}
 	else{
 		echo "add new user\n";
